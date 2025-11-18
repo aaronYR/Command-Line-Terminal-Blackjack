@@ -10,7 +10,8 @@ int main() {
 
     do {
         try {
-            // Create and shuffle the deck
+            srand(time(NULL)); 
+            // Creates and shuffles the deck using the Fisher-Yates algorithm
             Deck deck;
             deck.shuffleDeck();
 
@@ -18,20 +19,18 @@ int main() {
             Dealer dealer;
             Player player;
 
-            // Deal initial cards
+            // Cards are given to both dealer and player 
             player.addCard(deck.drawCard());
             dealer.addCard(deck.drawCard());
             player.addCard(deck.drawCard());
             dealer.addCard(deck.drawCard());
 
-            // Show both hands
             cout << "\nDealer's hand:\n";
             dealer.showHand(true);
 
             cout << "\nPlayer's hand:\n";
             player.showHand(false);
 
-            // Player turn
             player.takeTurn(deck);
 
             // Dealer turn (if player didn’t bust)
@@ -39,12 +38,12 @@ int main() {
                 dealer.playTurn(deck);
             }
 
-            // Show final results
+            // Shows the final results
             cout << "\n--- Final Results ---\n";
             cout << "Dealer's total: " << dealer.getHandValue() << endl;
             cout << "Player's total: " << player.getHandValue() << endl;
 
-            // Decide winner
+            // Decides winner based on bust or closest to 21
             if (player.getHandValue() > 21) {
                 cout << "\nYou busted! Dealer wins.\n";
             } else if (dealer.getHandValue() > 21) {
@@ -57,16 +56,17 @@ int main() {
                 cout << "\nIt's a tie!\n";
             }
 
-            // Log the round result
-            ofstream log("game_log.txt");
+            // Logs the round result to game_log.txt
+            ofstream fout("game_log.txt", ios::app);
             time_t now = time(NULL);
-            log << "Round completed at " << ctime(&now);
-            log << "Dealer: " << dealer.getHandValue()
-                << " | Player: " << player.getHandValue() << "\n\n";
-            log.close();
+            fout << "Round completed at " << ctime(&now);
+            fout << "Dealer: " << dealer.getHandValue()
+                << " | Player: " << player.getHandValue() << endl;
+            fout << "------------------------------\n";
+            fout.close();
         }
         catch (...) {
-            // Handle any error
+            // Handles any error
             cout << "An error occurred. Restarting with a new deck..." << endl;
             Deck newDeck;
             newDeck.shuffleDeck();
@@ -76,7 +76,7 @@ int main() {
         cout << "\nPlay again? (y/n): ";
         cin >> playAgain;
 
-        // Validate input
+        // Validates input to only accept 'y' 'Y' 'n' 'N'
         while (playAgain != 'y' && playAgain != 'Y' &&
                playAgain != 'n' && playAgain != 'N') {
             cout << "Invalid input. Please enter 'y' or 'n': ";
@@ -85,7 +85,7 @@ int main() {
 
     } while (playAgain == 'y' || playAgain == 'Y');
 
-    // End message
+    // End of the game 
     cout << "\nThanks for playing Blackjack!\n";
     return 0;
 }
